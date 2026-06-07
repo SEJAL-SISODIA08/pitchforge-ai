@@ -2,62 +2,89 @@
 
 > Turn your startup idea into an investor-ready pitch deck in minutes.
 
-## 🚀 Deploy to Vercel (5 minutes)
+🔗 **Live Demo**: [pitchforge-ai.vercel.app](https://pitchforge-ai-vert.vercel.app)
 
-### Step 1 — Push to GitHub
+---
+
+## What It Does
+
+PitchForge AI takes your startup idea as input and generates a full investor pitch analysis across 9 tabs:
+
+- **Overview** — Problem, Solution, USP, Go-To-Market
+- **Business Model Canvas** — All 9 BMC blocks
+- **Market Analysis** — TAM / SAM / SOM breakdown
+- **Competitor Analysis** — Threat matrix
+- **SWOT Analysis** — Strategic view
+- **Revenue Model** — Stream breakdown with percentages
+- **Financial Projections** — 5-year charts (Revenue, Profit, Users)
+- **Investor Readiness Score** — 0–100 score with dimension breakdown
+- **Pitch Deck** — 12-slide preview cards
+
+---
+
+## How It Works
+
+By default the app uses intelligent mock data tailored to your industry and startup stage — no API key needed.
+
+To enable real Claude AI generation, add your Anthropic API key (see setup below).
+
+---
+
+## Tech Stack
+
+- React 18 + Vite 8
+- Tailwind CSS
+- Recharts (financial charts)
+- Vercel Serverless Functions (API route)
+- Anthropic Claude API (optional)
+
+---
+
+## Local Development
+
 ```bash
-cd pitchforge
-git init
-git add .
-git commit -m "Initial commit — PitchForge AI"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/pitchforge-ai.git
-git push -u origin main
-```
-
-### Step 2 — Deploy on Vercel
-1. Go to [vercel.com](https://vercel.com) → Sign in with GitHub
-2. Click **"Add New Project"**
-3. Import your `pitchforge-ai` repository
-4. Click **"Deploy"** (Vercel auto-detects Vite)
-
-### Step 3 — Add your Claude API key
-1. In Vercel dashboard → your project → **Settings** → **Environment Variables**
-2. Add: `ANTHROPIC_API_KEY` = `sk-ant-...` (get from console.anthropic.com)
-3. Click **Save** → then **Redeploy**
-
-Your app is now live at `https://pitchforge-ai.vercel.app` 🎉
-
-## 🛠 Local Development
-
-```bash
+git clone https://github.com/SEJAL-SISODIA08/pitchforge-ai.git
+cd pitchforge-ai
 npm install
-# Create .env.local with:
-# ANTHROPIC_API_KEY=sk-ant-your-key-here
 npm run dev
 ```
 
-## 📁 Project Structure
-```
-pitchforge/
+App runs at `http://localhost:5173` — works immediately with mock data, no API key needed.
+
+---
+
+## Enable Real AI (Optional)
+
+1. Get a free API key from [console.anthropic.com](https://console.anthropic.com)
+2. Create a `.env.local` file in the project root:
+ANTHROPIC_API_KEY=sk-ant-your-key-here
+3. Restart the dev server
+
+---
+
+## Deploy Your Own
+
+1. Fork this repo
+2. Go to [vercel.com](https://vercel.com) → New Project → Import your fork
+3. Click **Deploy** (Vercel auto-detects Vite)
+4. Optionally add `ANTHROPIC_API_KEY` in Vercel → Settings → Environment Variables
+
+---
+
+## Project Structure
+pitchforge-ai/
 ├── api/
-│   └── generate.js        # Vercel serverless → Claude API
+│   └── generate.js           # Vercel serverless function → Claude API
 ├── src/
 │   ├── pages/
-│   │   ├── Landing.jsx    # Hero landing page
-│   │   ├── FormPage.jsx   # Startup intake form
-│   │   ├── LoadingPage.jsx
-│   │   └── ResultsPage.jsx # 9-tab results dashboard
-│   ├── App.jsx            # Router + state
+│   │   ├── Landing.jsx        # Hero landing page
+│   │   ├── FormPage.jsx       # Startup intake form
+│   │   ├── LoadingPage.jsx    # Loading screen
+│   │   └── ResultsPage.jsx    # 9-tab results dashboard
+│   ├── utils/
+│   │   └── generateMockData.js # Fallback mock data generator
+│   ├── App.jsx                # App state + page routing
 │   ├── main.jsx
 │   └── index.css
 ├── vercel.json
 └── package.json
-```
-
-## ✨ Features
-- **9-tab Results Dashboard**: Overview, BMC, Market, Competitors, SWOT, Revenue, Financials, Investor Score, Pitch Deck
-- **Claude AI powered**: Real AI analysis for every startup
-- **Graceful fallback**: Works with mock data even without API key
-- **Recharts**: Interactive financial projection charts
-- **Zero backend**: Everything runs on Vercel edge functions
