@@ -5,7 +5,6 @@
 🔗 **Live Demo**: [pitchforge-ai.vercel.app](https://pitchforge-ai-vert.vercel.app)
 
 ---
-
 ## What It Does
 
 PitchForge AI takes your startup idea as input and generates a full investor pitch analysis across 9 tabs:
