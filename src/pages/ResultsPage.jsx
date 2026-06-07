@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, LineChart, Line } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts'
 
 const TABS = [
   { id:'overview',    label:'Overview' },
@@ -35,6 +35,7 @@ export default function ResultsPage({ data, startup, onReset }) {
   const [activeTab, setActiveTab] = useState('overview')
   const [finType, setFinType] = useState('revenue')
   const [scoreAnimated, setScoreAnimated] = useState(false)
+  const [selectedSlide, setSelectedSlide] = useState(null)
   const navRef = useRef(null)
 
   useEffect(() => {
@@ -59,6 +60,35 @@ export default function ResultsPage({ data, startup, onReset }) {
 
   return (
     <div style={{ minHeight:'100vh', background:'var(--bg)', display:'flex', flexDirection:'column' }}>
+
+      {/* SLIDE PREVIEW MODAL */}
+      {selectedSlide && (
+        <div
+          onClick={() => setSelectedSlide(null)}
+          style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.7)', zIndex:200, display:'flex', alignItems:'center', justifyContent:'center', padding:'1.5rem' }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{ background:'var(--card)', border:'1px solid var(--border)', borderRadius:20, padding:'2rem', maxWidth:480, width:'100%' }}
+          >
+            <div style={{ fontSize:11, color:'var(--text3)', fontWeight:600, marginBottom:6 }}>Slide {selectedSlide.num}</div>
+            <div style={{ fontFamily:'Syne, sans-serif', fontSize:'1.3rem', fontWeight:800, marginBottom:'1rem' }}>{selectedSlide.title}</div>
+            <p style={{ color:'var(--text2)', lineHeight:1.8, fontSize:15, marginBottom:'1.5rem' }}>{selectedSlide.preview}</p>
+            <div style={{ background:'rgba(124,92,252,0.08)', border:'1px solid rgba(124,92,252,0.2)', borderRadius:10, padding:'0.75rem 1rem', marginBottom:'1.5rem' }}>
+              <p style={{ fontSize:13, color:'var(--accent2)', margin:0 }}>
+                📌 Full slide export coming soon. Use the data from each tab to build your deck.
+              </p>
+            </div>
+            <button
+              onClick={() => setSelectedSlide(null)}
+              style={{ background:'var(--accent)', border:'none', color:'#fff', borderRadius:8, padding:'10px 24px', fontSize:14, cursor:'pointer', fontFamily:'DM Sans, sans-serif' }}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* NAV */}
       <nav style={{ background:'var(--card)', borderBottom:'1px solid var(--border)', position:'sticky', top:0, zIndex:100 }}>
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 1.5rem', flexWrap:'wrap', gap:'0.5rem' }}>
@@ -95,8 +125,8 @@ export default function ResultsPage({ data, startup, onReset }) {
             <SectionTitle badge="AI Generated">Startup Overview</SectionTitle>
             <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(140px,1fr))', gap:12, marginBottom:'1.5rem' }}>
               {[
-                { label:'Market Size', val:data.tam, color:'var(--green)' },
-                { label:'Growth CAGR', val:data.cagr, color:'var(--amber)' },
+                { label:'Market Size', val:data.tam,              color:'var(--green)' },
+                { label:'Growth CAGR', val:data.cagr,             color:'var(--amber)' },
                 { label:'Stage',       val:startup.stage||'Idea', color:'var(--blue)' },
                 { label:'Funding Ask', val:startup.funding||'₹50L', color:'var(--accent2)' },
               ].map(m => (
@@ -119,13 +149,13 @@ export default function ResultsPage({ data, startup, onReset }) {
             <SectionTitle badge="9 Blocks">Business Model Canvas</SectionTitle>
             <div style={{ display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:8 }}>
               {[
-                { title:'Key Partners',     items:data.bmc.keyPartners,        span:'1 / span 1 / 3 / span 1' },
-                { title:'Key Activities',   items:data.bmc.keyActivities,      span:'1 / 2 / 2 / 3' },
-                { title:'Value Prop',       items:data.bmc.valueProposition,   span:'1 / 3 / 3 / 4', accent:true },
-                { title:'Customer Rel',     items:data.bmc.customerRel,        span:'1 / 4 / 2 / 5' },
-                { title:'Segments',         items:data.bmc.customerSegments,   span:'1 / 5 / 3 / 6' },
-                { title:'Key Resources',    items:data.bmc.keyResources,       span:'2 / 2 / 3 / 3' },
-                { title:'Channels',         items:data.bmc.channels,           span:'2 / 4 / 3 / 5' },
+                { title:'Key Partners',   items:data.bmc.keyPartners,      span:'1 / span 1 / 3 / span 1' },
+                { title:'Key Activities', items:data.bmc.keyActivities,    span:'1 / 2 / 2 / 3' },
+                { title:'Value Prop',     items:data.bmc.valueProposition, span:'1 / 3 / 3 / 4', accent:true },
+                { title:'Customer Rel',   items:data.bmc.customerRel,      span:'1 / 4 / 2 / 5' },
+                { title:'Segments',       items:data.bmc.customerSegments, span:'1 / 5 / 3 / 6' },
+                { title:'Key Resources',  items:data.bmc.keyResources,     span:'2 / 2 / 3 / 3' },
+                { title:'Channels',       items:data.bmc.channels,         span:'2 / 4 / 3 / 5' },
               ].map((cell, i) => (
                 <div key={i} style={{ gridArea:cell.span, background: cell.accent ? 'rgba(124,92,252,0.1)' : 'var(--bg2)', border:`1px solid ${cell.accent ? 'rgba(124,92,252,0.3)' : 'var(--border)'}`, borderRadius:10, padding:12 }}>
                   <div style={{ fontSize:10, fontWeight:700, color: cell.accent ? 'var(--accent2)' : 'var(--text3)', letterSpacing:'0.07em', textTransform:'uppercase', marginBottom:8 }}>{cell.title}</div>
@@ -156,9 +186,9 @@ export default function ResultsPage({ data, startup, onReset }) {
             <SectionTitle badge="TAM / SAM / SOM">Market Analysis</SectionTitle>
             <div style={{ display:'flex', alignItems:'flex-end', justifyContent:'center', gap:'2rem', padding:'2rem 0', flexWrap:'wrap' }}>
               {[
-                { label:'TAM', sub:'Total Addressable', size:170, val:data.tam, color:'rgba(124,92,252,0.2)', border:'rgba(124,92,252,0.4)', tc:'var(--accent2)' },
-                { label:'SAM', sub:'Serviceable Available', size:125, val:'35% of TAM', color:'rgba(96,165,250,0.15)', border:'rgba(96,165,250,0.35)', tc:'var(--blue)' },
-                { label:'SOM', sub:'Serviceable Obtainable', size:88, val:'$180M Y3', color:'rgba(34,211,160,0.15)', border:'rgba(34,211,160,0.35)', tc:'var(--green)' },
+                { label:'TAM', sub:'Total Addressable',    size:170, val:data.tam,    color:'rgba(124,92,252,0.2)', border:'rgba(124,92,252,0.4)', tc:'var(--accent2)' },
+                { label:'SAM', sub:'Serviceable Available',size:125, val:'35% of TAM',color:'rgba(96,165,250,0.15)',border:'rgba(96,165,250,0.35)',tc:'var(--blue)' },
+                { label:'SOM', sub:'Serviceable Obtainable',size:88, val:'$180M Y3',  color:'rgba(34,211,160,0.15)',border:'rgba(34,211,160,0.35)',tc:'var(--green)' },
               ].map(m => (
                 <div key={m.label} style={{ textAlign:'center' }}>
                   <div style={{ width:m.size, height:m.size, borderRadius:'50%', background:m.color, border:`2px solid ${m.border}`, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', margin:'0 auto 12px' }}>
@@ -217,10 +247,10 @@ export default function ResultsPage({ data, startup, onReset }) {
             <SectionTitle badge="Strategic View">SWOT Analysis</SectionTitle>
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
               {[
-                { title:'Strengths',     items:data.swot.strengths,     accent:'var(--green)',  bg:'rgba(34,211,160,0.08)',  border:'rgba(34,211,160,0.2)' },
-                { title:'Weaknesses',    items:data.swot.weaknesses,    accent:'var(--red)',    bg:'rgba(248,113,113,0.08)', border:'rgba(248,113,113,0.2)' },
-                { title:'Opportunities', items:data.swot.opportunities, accent:'var(--blue)',   bg:'rgba(96,165,250,0.08)',  border:'rgba(96,165,250,0.2)' },
-                { title:'Threats',       items:data.swot.threats,       accent:'var(--amber)',  bg:'rgba(245,158,11,0.08)',  border:'rgba(245,158,11,0.2)' },
+                { title:'Strengths',     items:data.swot.strengths,     accent:'var(--green)', bg:'rgba(34,211,160,0.08)',  border:'rgba(34,211,160,0.2)' },
+                { title:'Weaknesses',    items:data.swot.weaknesses,    accent:'var(--red)',   bg:'rgba(248,113,113,0.08)', border:'rgba(248,113,113,0.2)' },
+                { title:'Opportunities', items:data.swot.opportunities, accent:'var(--blue)',  bg:'rgba(96,165,250,0.08)',  border:'rgba(96,165,250,0.2)' },
+                { title:'Threats',       items:data.swot.threats,       accent:'var(--amber)', bg:'rgba(245,158,11,0.08)',  border:'rgba(245,158,11,0.2)' },
               ].map(s => (
                 <div key={s.title} style={{ background:s.bg, border:`1px solid ${s.border}`, borderRadius:12, padding:'1.2rem' }}>
                   <h5 style={{ fontSize:11, fontWeight:700, letterSpacing:'0.08em', textTransform:'uppercase', marginBottom:10, color:s.accent }}>{s.title}</h5>
@@ -265,10 +295,10 @@ export default function ResultsPage({ data, startup, onReset }) {
             <SectionTitle badge="5-Year View">Financial Projections</SectionTitle>
             <div style={{ display:'flex', gap:10, marginBottom:'1.5rem', flexWrap:'wrap' }}>
               {[
-                { label:'Break-even', val:'Month 28', change:'↑ On track' },
+                { label:'Break-even', val:'Month 28',                        change:'↑ On track' },
                 { label:'Y3 Revenue', val:`₹${data.financials.revenue[2]}L`, change:'↑ 166% YoY' },
                 { label:'Y5 ARR',     val:`₹${data.financials.revenue[4]}L`, change:'↑ Projected' },
-                { label:'LTV/CAC',    val:'4.2×', change:'↑ Strong' },
+                { label:'LTV/CAC',    val:'4.2×',                            change:'↑ Strong' },
               ].map(h => (
                 <div key={h.label} style={{ flex:1, minWidth:130, background:'var(--bg2)', border:'1px solid var(--border)', borderRadius:12, padding:'1rem' }}>
                   <div style={{ fontSize:11, color:'var(--text3)', textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:5 }}>{h.label}</div>
@@ -331,14 +361,14 @@ export default function ResultsPage({ data, startup, onReset }) {
         {activeTab === 'deck' && (
           <div>
             <SectionTitle badge="12 Slides">Pitch Deck</SectionTitle>
-            <p style={{ color:'var(--text2)', fontSize:14, marginBottom:'1.5rem' }}>Your complete investor pitch deck. Click any slide to preview.</p>
+            <p style={{ color:'var(--text2)', fontSize:14, marginBottom:'1.5rem' }}>Your complete investor pitch deck. Click any slide to see a preview.</p>
             <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(210px,1fr))', gap:14 }}>
               {data.slides.map(s => (
                 <div key={s.num}
-                  onClick={() => alert(`Slide ${s.num}: ${s.title}\n\n${s.preview}\n\nConnect your backend to export a full PPTX!`)}
+                  onClick={() => setSelectedSlide(s)}
                   style={{ background:'var(--card)', border:'1px solid var(--border)', borderRadius:14, padding:'1.4rem', cursor:'pointer', transition:'all 0.2s', aspectRatio:'16/10', display:'flex', flexDirection:'column', justifyContent:'space-between', position:'relative', overflow:'hidden' }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor='var(--accent)'; e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.boxShadow='0 8px 30px rgba(124,92,252,0.15)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor='var(--border)'; e.currentTarget.style.transform='none'; e.currentTarget.style.boxShadow='none'; }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor='var(--accent)'; e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.boxShadow='0 8px 30px rgba(124,92,252,0.15)' }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor='var(--border)'; e.currentTarget.style.transform='none'; e.currentTarget.style.boxShadow='none' }}
                 >
                   <div>
                     <div style={{ fontSize:11, color:'var(--text3)', fontWeight:600, marginBottom:6 }}>Slide {s.num}</div>
