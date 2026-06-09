@@ -7,6 +7,7 @@
 ---
 ## What It Does
 
+
 PitchForge AI takes your startup idea as input and generates a full investor pitch analysis across 9 tabs:
 
 - **Overview** — Problem, Solution, USP, Go-To-Market
